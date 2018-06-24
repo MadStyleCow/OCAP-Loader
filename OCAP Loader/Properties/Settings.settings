@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OCAP_Loader.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SourceDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\OCAP\TEST_JSON</Value>
+    </Setting>
+    <Setting Name="TaskHistoryFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\OCAP\task_history.json</Value>
+    </Setting>
+    <Setting Name="TaskDelay" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="TargetDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\OCAP\OCAP_OUTPUT</Value>
+    </Setting>
+    <Setting Name="TargetIntegrationDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\OCAP\OCAP_INTEGRATION</Value>
+    </Setting>
+    <Setting Name="DatabasePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\OCAP\data.db</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

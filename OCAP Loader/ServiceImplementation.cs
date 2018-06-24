@@ -1,6 +1,6 @@
-﻿using OCAP_Loader.Framework;
-using System.ServiceProcess;
-
+﻿using System.ServiceProcess;
+using OCAP_Loader.Framework;
+using OCAP_Loader.Model;
 
 namespace OCAP_Loader
 {
@@ -8,8 +8,8 @@ namespace OCAP_Loader
     /// The actual implementation of the windows service goes here...
     /// </summary>
     [WindowsService("OCAP_Loader",
-        DisplayName = "OCAP_Loader",
-        Description = "The description of the OCAP_Loader service.",
+        DisplayName = "OCAP Loader",
+        Description = "Загрузчик реплеев для OCAP",
         EventLogSource = "OCAP_Loader",
         StartMode = ServiceStartMode.Automatic)]
     public class ServiceImplementation : IWindowsService
@@ -17,7 +17,6 @@ namespace OCAP_Loader
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
         }
@@ -28,6 +27,11 @@ namespace OCAP_Loader
         /// <param name="args">Any command line arguments</param>
         public void OnStart(string[] args)
         {
+            // Create a new service instance
+            Loader _service = new Loader();
+
+            // And then run it
+            _service.Run();
         }
 
         /// <summary>
@@ -35,6 +39,8 @@ namespace OCAP_Loader
         /// </summary>
         public void OnStop()
         {
+            // On stop - save the existing history entries for future use
+            History.Instance.Save();
         }
 
         /// <summary>

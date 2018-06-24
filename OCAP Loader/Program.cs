@@ -2,6 +2,7 @@
 using System.Linq;
 using System.ServiceProcess;
 using OCAP_Loader.Framework;
+using OCAP_Loader.Model;
 
 namespace OCAP_Loader
 {
@@ -45,7 +46,11 @@ namespace OCAP_Loader
 
             catch (Exception ex)
             {
+                // Write to console
                 ConsoleHarness.WriteToConsole(ConsoleColor.Red, "An exception occurred in Main(): {0}", ex);
+
+                // Write to log
+                Logger.Instance.Log(true, pEx: ex);
             }
         }
     }
