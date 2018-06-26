@@ -81,7 +81,7 @@ namespace OCAP_Loader.Model
                 String.Format("INSERT INTO operations " +
                     "(world_name, mission_name, mission_duration, filename, date, type) " +
                     "values ('{0}', '{1}', {2}, '{3}', '{4}', 'wog3')",
-                    pReplay.WorldName, pReplay.MissionName, pReplay.EndFrame * pReplay.CaptureDelay, pReplay.FileName, pReplay.DateTimeEnd.ToString("yyyy-MM-dd")),
+                    pReplay.WorldName, pReplay.MissionName, (int)Math.Round(pReplay.EndFrame * pReplay.CaptureDelay), pReplay.FileName, pReplay.DateTimeEnd.ToString("yyyy-MM-dd")),
                 pConnection);
 
             // Execute it

@@ -142,63 +142,76 @@ namespace OCAP_Loader.Model
         /// <param name="pArgs">Invocation arguments</param>
         public void OnTimerElapsed(object pSource, ElapsedEventArgs pArgs)
         {
-            // Do we have any jobs available?
-            if (!_inProgress & CheckTaskAvailability())
+            try
             {
-                // Set the in progress flag
-                _inProgress = true;
-
-                // Yes, we do. Get the list of tasks to be executed
-                List<string> _files = GetTaskList();
-
-                // Create a list of files to be processed
-                List<Replay> _replays = new List<Replay>();
-
-                // Read the file, parse it and create and place an order.
-                foreach (string _file in _files)
+                // Do we have any jobs available?
+                if (!_inProgress & CheckTaskAvailability())
                 {
-                    // Does the file exist?
-                    if (File.Exists(_file))
+                    // Set the in progress flag
+                    _inProgress = true;
+
+                    // Yes, we do. Get the list of tasks to be executed
+                    List<string> _files = GetTaskList();
+
+                    // Create a list of files to be processed
+                    List<Replay> _replays = new List<Replay>();
+
+                    // Read the file, parse it and create and place an order.
+                    foreach (string _file in _files)
                     {
-                        // Yes it does. Read it and parse it.
-                        Replay _replay = JsonConvert.DeserializeObject<Replay>(File.ReadAllText(_file),
-                            new JsonSerializerSettings()
-                            {
-                                DateFormatString = "dd.MM.yyyy H:mm:ss"
-                            });
+                        // Does the file exist?
+                        if (File.Exists(_file))
+                        {
+                            // Yes it does. Read it and parse it.
+                            Replay _replay = JsonConvert.DeserializeObject<Replay>(File.ReadAllText(_file),
+                                new JsonSerializerSettings()
+                                {
+                                    DateFormatString = "dd.MM.yyyy H:mm:ss"
+                                });
 
-                        // Set the filename & path
-                        _replay.FullPath = _file;
-                        _replay.FileName = Path.GetFileName(_file);
+                            // Set the filename & path
+                            _replay.FullPath = _file;
+                            _replay.FileName = Path.GetFileName(_file);
 
-                        // Add it to the replay list
-                        _replays.Add(_replay);
+                            // Add it to the replay list
+                            _replays.Add(_replay);
+                        }
+                        else
+                        {
+                            throw new FileNotFoundException("Specified file does not exist.");
+                        }
                     }
-                    else
+
+                    // Now that all files have been parsed, orders for database loading should be issued
+                    Database.Instance.AddReplayList(_replays);
+
+                    // Afterwards, copy the files to the output directories
+                    foreach (Replay _replay in _replays)
                     {
-                        throw new FileNotFoundException("Specified file does not exist.");
+                        // Copy to the output and integration folders
+                        CopyTo(_replay, Settings.Default.TargetDirectory);
+                        CopyTo(_replay, Settings.Default.TargetIntegrationDirectory);
+
+                        // Add the file to the list of processed items
+                        History.Instance.Add(_replay.FileName);
+
+                        Logger.Instance.Log(false, String.Format("{0} succesfully processed", _replay.FileName));
                     }
+
+                    // Save the updated history file
+                    History.Instance.Save();
                 }
+            }
+            catch (Exception ex)
+            {
+                // Write to log
+                Logger.Instance.Log(true, pEx: ex);
 
-                // Now that all files have been parsed, orders for database loading should be issued
-                Database.Instance.AddReplayList(_replays);
-
-                // Afterwards, copy the files to the output directories
-                foreach (Replay _replay in _replays)
-                {
-                    // Copy to the output and integration folders
-                    CopyTo(_replay, Settings.Default.TargetDirectory);
-                    CopyTo(_replay, Settings.Default.TargetIntegrationDirectory);
-
-                    // Add the file to the list of processed items
-                    History.Instance.Add(_replay.FileName);
-
-                    Logger.Instance.Log(false, String.Format("{0} succesfully processed", _replay.FileName));
-                }
-
-                // Save the updated history file
-                History.Instance.Save();
-
+                // Rethrow
+                // throw ex;
+            }
+            finally
+            {
                 // Indicate we are done
                 _inProgress = false;
             }

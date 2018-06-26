@@ -43,7 +43,6 @@ namespace OCAP_Loader
                     }
                 }
             }
-
             catch (Exception ex)
             {
                 // Write to console
